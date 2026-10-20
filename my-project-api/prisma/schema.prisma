@@ -13,3 +13,39 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Item {
+  id          String   @id @default(uuid())
+  sapPn       String
+  starkeyPn   String
+  itemName    String
+  mouldNo     String?
+  equipmentNo String?
+  testing     Boolean  @default(false)
+  sapPnAlt    String?
+  rm          String?
+  materialId  String?
+  deletedAt   DateTime?
+
+  material    Material? @relation(fields: [materialId], references: [id], onDelete: Restrict)
+  @@map("items")
+}
+
+model Material {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  items     Item[]
+  createdAt DateTime @default(now())
+
+  @@map("materials")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  password  String   @unique
+  role      String   @default("user")
+}
+
+
+
