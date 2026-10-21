@@ -158,4 +158,21 @@ export class ItemsService {
 
     return item;
   }
+
+  async remove(id: string) {
+    const existingItem = await this.prisma.item.findUnique({
+      where: { id, deletedAt: null },
+    });
+
+    if (!existingItem) {
+      throw new NotFoundException('Item Not Found');
+    }
+
+    return this.prisma.item.update({
+      where: { id },
+      data: {
+        deletedAt: new Date(),
+      },
+    })
+  }
 }
