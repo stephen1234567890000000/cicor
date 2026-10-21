@@ -143,4 +143,19 @@ export class ItemsService {
       },
     });
   }
+
+  async findOne(id: string) {
+    const item = await this.prisma.item.findUnique({
+      where: { id, deletedAt: null },
+      include: {
+        material: true,
+      },
+    });
+
+    if (!item) {
+      throw new NotFoundException('Item Not Found');
+    }
+
+    return item;
+  }
 }
