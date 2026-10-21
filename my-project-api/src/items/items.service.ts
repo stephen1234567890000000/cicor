@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateItemDto } from './dto/create-item.dto';
+import { UpdateItemDto } from './dto/update-item.dto';
 
 @Injectable()
 export class ItemsService {
@@ -98,6 +99,44 @@ export class ItemsService {
         material: {
           connect: { id: materialId },
         },
+      },
+      include: {
+        material: true,
+      },
+    });
+  }
+
+  async update(id: string, dto: UpdateItemDto) {
+    const existingItem = await this.prisma.item.findUnique({
+      where: { id, deletedAt: null },
+    });
+
+    if (!existingItem) {
+      throw new NotFoundException('Item Not Found');
+    }
+
+    const { materialId, ...itemData } = dto;
+
+    if (materialId !== undefined && materialId !== null) {
+      const materials = await this.prisma.material.findUnique({
+        where: { id: materialId },
+      });
+
+      if (!materials) {
+        throw new NotFoundException('Material Not Found');
+      }
+    }
+
+    return this.prisma.item.update({
+      where: { id },
+      data: {
+        ...itemData,
+        ...(materialId !== undefined && {
+          material:
+            materialId === null
+              ? { disconnect: true }
+              : { connect: { id: materialId } },
+        }),
       },
       include: {
         material: true,
