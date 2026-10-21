@@ -24,6 +24,11 @@ export class ItemsController {
     return this.itemsService.findAll(role);
   }
 
+  @Get(':id')
+  async findOne(@Param('id', ParseUUIDPipe) id: string) {
+    return this.itemsService.findOne(id);
+  }
+
   @Post()
   async create(@Body() dto: CreateItemDto) {
     return this.itemsService.create(dto);
