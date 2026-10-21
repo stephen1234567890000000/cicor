@@ -1,5 +1,10 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { CreateItemDto } from './dto/create-item.dto';
 
 @Injectable()
 export class ItemsService {
@@ -71,8 +76,32 @@ export class ItemsService {
           };
 
         default:
-          throw new ForbiddenException('Role tidak memiliki akses ke items');
+          throw new ForbiddenException('Role not allowed');
       }
+    });
+  }
+
+  async create(dto: CreateItemDto) {
+    const materials = await this.prisma.material.findUnique({
+      where: { id: dto.materialId },
+    });
+
+    if (!materials) {
+      throw new NotFoundException('Material Not Found');
+    }
+
+    const { materialId, ...itemData } = dto;
+
+    return this.prisma.item.create({
+      data: {
+        ...itemData,
+        material: {
+          connect: { id: materialId },
+        },
+      },
+      include: {
+        material: true,
+      },
     });
   }
 }

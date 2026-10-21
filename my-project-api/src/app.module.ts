@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { ConfigModule } from '@nestjs/config';
 import { ItemsModule } from './items/items.module';
+import { MaterialsModule } from './materials/materials.module';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
@@ -22,6 +23,7 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
     }),
     AuthModule,
     ItemsModule,
+    MaterialsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
