@@ -1,0 +1,29 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "cicor-api",
+  "main": "src/worker.ts",
+  "compatibility_date": "2026-10-22",
+  "compatibility_flags": ["nodejs_compat"],
+  "vars": {
+    "NODE_ENV": "production",
+  },
+  "alias": {
+    "@nestjs/microservices": "./src/empty-module.ts",
+    "@nestjs/microservices/microservices-module.js": "./src/empty-module.ts",
+    "@nestjs/websockets": "./src/empty-module.ts",
+    "@nestjs/websockets/socket-module.js": "./src/empty-module.ts",
+    "kafkajs": "./src/empty-module.ts",
+    "ioredis": "./src/empty-module.ts",
+    "mqtt": "./src/empty-module.ts",
+    "@nats-io/transport-node": "./src/empty-module.ts",
+    "amqp-connection-manager": "./src/empty-module.ts",
+    "@nestjs/platform-socket.io": "./src/empty-module.ts",
+  },
+  "hyperdrive": [
+    {
+      "binding": "HYPERDRIVE",
+      "id": "950d5c0f0eae4980ac5c3e21e502b378",
+      "localConnectionString": "POSTGRES_CONNECTION_STRING",
+    },
+  ],
+}
