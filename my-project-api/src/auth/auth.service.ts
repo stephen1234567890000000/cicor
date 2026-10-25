@@ -14,6 +14,9 @@ export class AuthService {
   async login(dto: LoginDto) {
     const user = await this.prisma.user.findUnique({
       where: { email: dto.email },
+      include: {
+        roleRef: true,
+      },
     });
 
     if (!user) {
@@ -21,19 +24,27 @@ export class AuthService {
     }
 
     const isPassword = await bcrypt.compare(dto.password, user.password);
+
     if (!isPassword) {
       throw new UnauthorizedException('Invalid email or password');
     }
 
-    const accesToken = await this.jwtService.signAsync({
+    if (!user.roleRef) {
+      throw new UnauthorizedException('User role not found');
+    }
+
+    const accessToken = await this.jwtService.signAsync({
       id: user.id,
       email: user.email,
-      role: user.role,
+      role: user.roleRef.roleName,
     });
 
     return {
-      access_token: accesToken,
+      access_token: accessToken,
+      name: user.name,
+      email: user.email,
+      role: user.roleRef.roleName,
       token_type: 'Bearer',
-    }
+    };
   }
 }

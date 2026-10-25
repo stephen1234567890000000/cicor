@@ -30,6 +30,9 @@ export class WorkerAuthService {
     try {
       const user = await prisma.user.findUnique({
         where: { email: dto.email },
+        include: {
+          roleRef: true,
+        },
       });
 
       if (!user) {
@@ -42,12 +45,16 @@ export class WorkerAuthService {
         throw new UnauthorizedException('Invalid email or password');
       }
 
+      if (!user.roleRef) {
+        throw new UnauthorizedException('User belum memiliki role');
+      }
+
       const secretKey = new TextEncoder().encode(secret);
 
       const accessToken = await new SignJWT({
         id: user.id,
         email: user.email,
-        role: user.role,
+        role: user.roleRef.roleName,
       })
         .setProtectedHeader({ alg: 'HS256' })
         .setIssuedAt()
@@ -56,6 +63,9 @@ export class WorkerAuthService {
 
       return {
         access_token: accessToken,
+        name: user.name,
+        email: user.email,
+        role: user.roleRef.roleName,
         token_type: 'Bearer',
       };
     } finally {

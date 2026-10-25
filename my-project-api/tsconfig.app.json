@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.build.json",
+  "compilerOptions": {},
+  "include": ["src/**/*.ts", "worker-configuration.d.ts"],
+  "exclude": [
+    "node_modules",
+    "test",
+    "dist",
+    "**/*spec.ts",
+    "src/worker.ts",
+    "src/worker-app.module.ts",
+    "src/worker-auth.service.ts",
+    "src/worker-jwt.guard.ts"
+  ]
+}
