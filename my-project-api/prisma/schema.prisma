@@ -1,11 +1,6 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider   = "prisma-client-js"
   engineType = "client"
 }
 
@@ -14,21 +9,46 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Role {
+  id       String   @id @default(uuid())
+  roleName String   @unique
+
+  users    User[]
+  statuses Status[]
+
+  @@map("roles")
+}
+
+model Status {
+  id         String @id @default(uuid())
+  statusName String
+  roleId     String
+
+  role  Role   @relation(fields: [roleId], references: [id], onDelete: Restrict)
+  items Item[]
+
+  @@unique([roleId, statusName])
+  @@map("statuses")
+}
+
 model Item {
-  id          String   @id @default(uuid())
+  id          String    @id @default(uuid())
   sapPn       String
   starkeyPn   String
   itemName    String
   mouldNo     String?
   equipmentNo String?
-  testing     Boolean  @default(false)
+  testing     Boolean   @default(false)
   sapPnAlt    String?
   rm          String?
   materialId  String?
-  price       Decimal? @db.Decimal(12, 2)
+  price       Decimal?  @db.Decimal(12, 2)
   deletedAt   DateTime?
+  statusId    String?
 
-  material    Material? @relation(fields: [materialId], references: [id], onDelete: Restrict)
+  material Material? @relation(fields: [materialId], references: [id], onDelete: Restrict)
+  status   Status?   @relation(fields: [statusId], references: [id], onDelete: Restrict)
+
   @@map("items")
 }
 
@@ -42,11 +62,14 @@ model Material {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  name      String   
-  email     String   @unique
-  password  String   
-  role      String   @default("user")
+  id       String @id @default(uuid())
+  name     String
+  email    String @unique
+  password String
+
+  // Dipertahankan sementara untuk migrasi data lama.
+  role   String @default("user")
+  roleId String?
+
+  roleRef Role? @relation(fields: [roleId], references: [id], onDelete: Restrict)
 }
-
-

@@ -18,5 +18,13 @@
     "skipLibCheck": true,
     "strict": true,
     "strictPropertyInitialization": false
-  }
+  },
+  "exclude": [
+    "node_modules",
+    "dist",
+    "src/worker.ts",
+    "src/worker-app.module.ts",
+    "src/worker-auth.service.ts",
+    "src/worker-jwt.guard.ts"
+  ]
 }

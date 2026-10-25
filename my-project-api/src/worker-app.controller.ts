@@ -1,5 +1,6 @@
 import {
   Controller,
+  Req,
   Body,
   Get,
   Patch,
@@ -16,6 +17,7 @@ import { WorkerItemsService } from './worker-items.service';
 import { CreateItemDto } from './items/dto/create-item.dto';
 import { UpdateItemDto } from './items/dto/update-item.dto';
 import { WorkerJwtGuard } from './worker-jwt.guard';
+import { Request } from 'express';
 
 @Controller()
 export class WorkerAppController {
@@ -59,11 +61,22 @@ export class WorkerAppController {
   }
 
   @Get('items')
-  async getItems(@Query('role') role = '') {
-    return this.workerItemsService.findAll(role);
+  @UseGuards(WorkerJwtGuard)
+  async getItems(
+    @Req()
+    req: Request & {
+      user: {
+        userId: string;
+        email: string;
+        role: string;
+      };
+    },
+  ) {
+    return this.workerItemsService.findAll(req.user.role);
   }
 
   @Get('items/:id')
+  @UseGuards(WorkerJwtGuard)
   async getItemById(@Param('id') id: string) {
     const prisma = this.prismaFactory.create();
 
