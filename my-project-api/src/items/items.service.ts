@@ -37,6 +37,7 @@ export class ItemsService {
 
     return items.map((item: any, i: number) => {
       const commonFields = {
+        id: item.id,
         no: i + 1,
         sapPn: item.sapPn,
         starkeyPn: item.starkeyPn,
@@ -173,6 +174,6 @@ export class ItemsService {
       data: {
         deletedAt: new Date(),
       },
-    })
+    });
   }
 }
