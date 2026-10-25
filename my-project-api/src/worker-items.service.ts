@@ -47,6 +47,7 @@ export class WorkerItemsService {
 
       return items.map((item, i) => {
         const commonFields = {
+          id: item.id,
           no: i + 1,
           sapPn: item.sapPn,
           starkeyPn: item.starkeyPn,
