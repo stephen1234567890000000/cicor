@@ -54,7 +54,7 @@ model Item {
 
 model Material {
   id        String   @id @default(uuid())
-  name      String   @unique
+  name      String   @unique  
   items     Item[]
   createdAt DateTime @default(now())
 
@@ -72,4 +72,80 @@ model User {
   roleId String?
 
   roleRef Role? @relation(fields: [roleId], references: [id], onDelete: Restrict)
+}
+
+model Process {
+  id          String    @id @default(uuid())
+  processName String    @unique
+
+  products Product[]
+
+  @@map("processes")
+}
+
+model TestingReason {
+  id     String @id @default(uuid())
+  reason String @unique
+
+  testingRequisitions TestingRequisition[]
+
+  @@map("testing_reasons")
+}
+
+model Product {
+  id                   String   @id @default(uuid())
+  productNo            String
+  productName          String
+  processId            String
+  productDrawingNumber String
+  mouldNo              String
+  equipmentNo          String
+  cavityNo             String
+
+  process              Process              @relation(fields: [processId], references: [id], onDelete: Restrict)
+  customerProducts     CustomerProduct[]
+  testingRequisitions  TestingRequisition[]
+
+  @@map("products")
+}
+
+model Customer {
+  id           String @id @default(uuid())
+  customerName String
+
+  customerProducts    CustomerProduct[]
+  testingRequisitions TestingRequisition[]
+
+  @@map("customers")
+}
+
+model CustomerProduct {
+  customerId String
+  productId  String
+
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  product  Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@id([customerId, productId])
+  @@index([productId])
+  @@map("customer_products")
+}
+
+model TestingRequisition {
+  id              String   @id @default(uuid())
+  customerId      String
+  productId       String
+  trialNo         String
+  testDate        DateTime @db.Date
+  testingReasonId String
+  mcName          String
+  inspectionSample Int
+  toolroomSample   Int
+  clientSample     Int
+
+  customer      Customer      @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  product       Product       @relation(fields: [productId], references: [id], onDelete: Restrict)
+  testingReason TestingReason @relation(fields: [testingReasonId], references: [id], onDelete: Restrict)
+
+  @@map("testing_requisitions")
 }
