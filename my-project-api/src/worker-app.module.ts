@@ -7,9 +7,18 @@ import { WorkerItemsService } from './worker-items.service';
 import { WorkerAuthController } from './worker-auth.controller';
 import { WorkerAuthService } from './worker-auth.service';
 import { WorkerJwtGuard } from './worker-jwt.guard';
+import { WorkerMasterDataService } from './worker-master-data.service';
+import { WorkerMasterDataController } from './worker-master-data.controller';
+import { WorkerTestingRequisitionsController } from './worker-testing-requisitions.controller';
+import { WorkerTestingRequisitionsService } from './worker-testing-requisitions.service';
 
 @Module({
-  controllers: [WorkerAppController, WorkerAuthController],
+  controllers: [
+    WorkerAppController,
+    WorkerAuthController,
+    WorkerMasterDataController,
+    WorkerTestingRequisitionsController,
+  ],
   providers: [
     AppService,
     {
@@ -21,6 +30,8 @@ import { WorkerJwtGuard } from './worker-jwt.guard';
     WorkerItemsService,
     WorkerAuthService,
     WorkerJwtGuard,
+    WorkerMasterDataService,
+    WorkerTestingRequisitionsService,
   ],
 })
 export class WorkerAppModule {}
