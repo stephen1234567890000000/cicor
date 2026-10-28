@@ -28,10 +28,10 @@ export class WorkerMasterDataController {
   }
 
   @Get('products')
-  @UseGuards(WorkerJwtGuard)
+  @UseGuards(WorkerJwtGuard)  
   findProducts(
-    @Query('process_id') processId?: string,
-    @Query('customer_id') customerId?: string,
+    @Query('processId') processId?: string,
+    @Query('customerId') customerId?: string,
   ) {
     return this.masterDataService.findProducts(processId, customerId);
   }
