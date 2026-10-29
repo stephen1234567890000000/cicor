@@ -50,23 +50,37 @@ export class TestingRequisitionsService {
       );
     }
 
-    return this.prisma.testingRequisition.create({
-      data: {
-        customerId: dto.customerId,
-        productId: dto.productId,
-        trialNo: dto.trialNo,
-        testDate: new Date(dto.testDate),
-        testingReasonId: dto.testingReasonId,
-        mcName: dto.mcName,
-        inspectionSample: dto.inspectionSample,
-        toolroomSample: dto.toolroomSample,
-        clientSample: dto.clientSample,
-      },
-      include: {
-        customer: true,
-        product: true,
-        testingReason: true,
-      },
+    return this.prisma.$transaction(async (tx) => {
+      const counter = await tx.testingRequisitionCounter.upsert({
+        where: { id: 1 },
+        update: {
+          nextNumber: { increment: 1 },
+        },
+        create: {
+          id: 1,
+          nextNumber: 0,
+        },
+      });
+
+      return tx.testingRequisition.create({
+        data: {
+          customerId: dto.customerId,
+          productId: dto.productId,
+          testingReasonId: dto.testingReasonId,
+          revisionNo: counter.nextNumber,
+          trialNo: counter.nextNumber,
+          testDate: new Date(dto.testDate),
+          mcName: dto.mcName,
+          inspectionSample: dto.inspectionSample,
+          toolroomSample: dto.toolroomSample,
+          clientSample: dto.clientSample,
+        },
+        include: {
+          customer: true,
+          product: true,
+          testingReason: true,
+        },
+      });
     });
   }
 

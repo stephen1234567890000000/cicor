@@ -28,7 +28,7 @@ export class WorkerMasterDataController {
   }
 
   @Get('products')
-  @UseGuards(WorkerJwtGuard)  
+  @UseGuards(WorkerJwtGuard)
   findProducts(
     @Query('processId') processId?: string,
     @Query('customerId') customerId?: string,
