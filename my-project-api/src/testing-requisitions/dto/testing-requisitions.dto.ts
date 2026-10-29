@@ -14,10 +14,6 @@ export class CreateTestingRequisitionDto {
   @IsUUID()
   productId: string;
 
-  @IsString()
-  @IsNotEmpty()
-  trialNo: string;
-
   @IsDateString()
   testDate: string;
 

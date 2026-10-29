@@ -135,7 +135,8 @@ model TestingRequisition {
   id              String   @id @default(uuid())
   customerId      String
   productId       String
-  trialNo         String
+  trialNo         Int
+  revisionNo     Int
   testDate        DateTime @db.Date
   testingReasonId String
   mcName          String
@@ -148,4 +149,11 @@ model TestingRequisition {
   testingReason TestingReason @relation(fields: [testingReasonId], references: [id], onDelete: Restrict)
 
   @@map("testing_requisitions")
+}
+
+model TestingRequisitionCounter {
+  id         Int @id
+  nextNumber Int
+
+  @@map("testing_requisition_counter")
 }
