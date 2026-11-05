@@ -60,6 +60,31 @@ export class WorkerTestingRequisitionsService {
       }
 
       return await prisma.$transaction(async (tx) => {
+        const requiredRoles = ['Manager', 'Supervisor', 'Director'];
+
+        const roles = await tx.role.findMany({
+          where: {
+            roleName: {
+              in: requiredRoles,
+            },
+          },
+          select: {
+            id: true,
+            roleName: true,
+          },
+        });
+
+        const foundRoleNames = roles.map((role) => role.roleName);
+        const missingRoles = requiredRoles.filter(
+          (roleName) => !foundRoleNames.includes(roleName),
+        );
+
+        if (missingRoles.length > 0) {
+          throw new BadRequestException(
+            `Required roles not found: ${missingRoles.join(', ')}`,
+          );
+        }
+
         const counter = await tx.testingRequisitionCounter.upsert({
           where: { id: 1 },
           update: {
@@ -71,7 +96,7 @@ export class WorkerTestingRequisitionsService {
           },
         });
 
-        return tx.testingRequisition.create({
+        const requisition = await tx.testingRequisition.create({
           data: {
             customerId: dto.customerId,
             productId: dto.productId,
@@ -83,11 +108,37 @@ export class WorkerTestingRequisitionsService {
             inspectionSample: dto.inspectionSample,
             toolroomSample: dto.toolroomSample,
             clientSample: dto.clientSample,
+            backFlush: dto.backFlush,
+            rawMaterial: dto.rawMaterial,
+          },
+        });
+
+        await tx.requisitionApproval.createMany({
+          data: roles.map((role) => ({
+            testingRequisitionId: requisition.id,
+            roleId: role.id,
+            signature: null,
+            signAt: null,
+          })),
+        });
+
+        return tx.testingRequisition.findUnique({
+          where: {
+            id: requisition.id,
           },
           include: {
             customer: true,
             product: true,
             testingReason: true,
+            approvals: {
+              include: {
+                role: {
+                  select: {
+                    roleName: true,
+                  },
+                },
+              },
+            },
           },
         });
       });
@@ -116,7 +167,11 @@ export class WorkerTestingRequisitionsService {
           take: limit,
           include: {
             customer: true,
-            product: true,
+            product: {
+              include: {
+                process: true,
+              },
+            },
             testingReason: true,
           },
           orderBy: {
@@ -135,6 +190,41 @@ export class WorkerTestingRequisitionsService {
           totalPage: Math.ceil(total / limit),
         },
       };
+    } finally {
+      await prisma.$disconnect();
+    }
+  }
+
+  async findOne(id: string) {
+    const prisma = this.prismaFactory.create();
+    try {
+      const requisition = await prisma.testingRequisition.findUnique({
+        where: { id },
+        include: {
+          customer: true,
+          product: {
+            include: {
+              process: true,
+            },
+          },
+          testingReason: true,
+          approvals: {
+            include: {
+              role: {
+                select: {
+                  roleName: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      if (!requisition) {
+        throw new NotFoundException('Testing Requisition Not Found');
+      }
+
+      return requisition;
     } finally {
       await prisma.$disconnect();
     }

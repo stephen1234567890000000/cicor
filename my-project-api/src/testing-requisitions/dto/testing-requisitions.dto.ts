@@ -2,6 +2,7 @@ import {
   IsDateString,
   IsInt,
   IsNotEmpty,
+  IsOptional,
   IsString,
   IsUUID,
   Min,
@@ -35,4 +36,12 @@ export class CreateTestingRequisitionDto {
   @IsInt()
   @Min(0)
   clientSample: number;
+
+  @IsOptional()
+  @IsString()
+  backFlush?: string;
+
+  @IsOptional()
+  @IsString()
+  rawMaterial?: string;
 }

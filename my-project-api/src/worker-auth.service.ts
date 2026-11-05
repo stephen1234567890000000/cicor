@@ -54,7 +54,7 @@ export class WorkerAuthService {
       const accessToken = await new SignJWT({
         id: user.id,
         email: user.email,
-        role: user.roleRef.roleName,
+        roleId: user.roleId,
       })
         .setProtectedHeader({ alg: 'HS256' })
         .setIssuedAt()

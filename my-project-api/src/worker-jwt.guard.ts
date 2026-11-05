@@ -40,7 +40,7 @@ export class WorkerJwtGuard implements CanActivate {
       if (
         typeof payload.id !== 'string' ||
         typeof payload.email !== 'string' ||
-        typeof payload.role !== 'string'
+        typeof payload.roleId !== 'string'
       ) {
         throw new UnauthorizedException('Payload JWT tidak valid');
       }
@@ -48,7 +48,7 @@ export class WorkerJwtGuard implements CanActivate {
       request.user = {
         userId: payload.id,
         email: payload.email,
-        role: payload.role,
+        roleId: payload.roleId,
       };
 
       return true;

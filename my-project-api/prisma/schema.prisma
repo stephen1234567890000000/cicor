@@ -15,6 +15,7 @@ model Role {
 
   users    User[]
   statuses Status[]
+  approvals RequisitionApproval[]
 
   @@map("roles")
 }
@@ -72,6 +73,8 @@ model User {
   roleId String?
 
   roleRef Role? @relation(fields: [roleId], references: [id], onDelete: Restrict)
+
+  profile UserProfile?
 }
 
 model Process {
@@ -136,17 +139,21 @@ model TestingRequisition {
   customerId      String
   productId       String
   trialNo         Int
-  revisionNo     Int
+  revisionNo      Int
   testDate        DateTime @db.Date
   testingReasonId String
   mcName          String
   inspectionSample Int
   toolroomSample   Int
   clientSample     Int
+  backFlush       String?
+   rawMaterial    String?
 
   customer      Customer      @relation(fields: [customerId], references: [id], onDelete: Restrict)
   product       Product       @relation(fields: [productId], references: [id], onDelete: Restrict)
   testingReason TestingReason @relation(fields: [testingReasonId], references: [id], onDelete: Restrict)
+
+  approvals RequisitionApproval[]
 
   @@map("testing_requisitions")
 }
@@ -156,4 +163,32 @@ model TestingRequisitionCounter {
   nextNumber Int
 
   @@map("testing_requisition_counter")
+}
+
+model UserProfile {
+  id             String  @id @default(uuid())
+  username       String
+  phoneNumber    String?
+  profilePicture String?
+  signature      String?
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_profile")
+}
+
+model RequisitionApproval {
+  id                   String   @id @default(uuid())
+  testingRequisitionId String
+  roleId               String
+  signature            String?
+  signAt               DateTime?
+
+  requisition TestingRequisition @relation(fields: [testingRequisitionId], references: [id], onDelete: Restrict)
+  role        Role               @relation(fields: [roleId], references: [id], onDelete: Restrict)
+
+  @@index([testingRequisitionId])
+  @@index([roleId])
+  @@map("requisition_approval")
 }
