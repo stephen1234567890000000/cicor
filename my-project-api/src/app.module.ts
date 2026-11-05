@@ -12,6 +12,7 @@ import { CustomersModule } from './customers/customers.module';
 import { TestingReasonsModule } from './testing-reasons/testing-reasons.module';
 import { ProductsModule } from './products/products.module';
 import { TestingRequisitionsModule } from './testing-requisitions/testing-requisitions.module';
+import { RequisitionApprovalModule } from './requisition-approval/requisition-approval.module';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
@@ -34,6 +35,7 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
     TestingReasonsModule,
     ProductsModule,
     TestingRequisitionsModule,
+    RequisitionApprovalModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -6,7 +6,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 interface JwtPayload {
   id: string;
   email: string;
-  role: string;
+  roleId: string;
 }
 
 @Injectable()
@@ -26,14 +26,14 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   validate(payload: JwtPayload) {
-    if (!payload.id || !payload.role) {
+    if (!payload.id || !payload.roleId) {
       throw new UnauthorizedException('Payload JWT tidak valid');
     }
 
     return {
       userId: payload.id,
       email: payload.email,
-      role: payload.role,
+      roleId: payload.roleId,
     };
   }
 }

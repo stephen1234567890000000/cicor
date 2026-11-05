@@ -8,6 +8,7 @@ import {
   Post,
   Query,
   UseGuards,
+  Param,
 } from '@nestjs/common';
 import { WorkerJwtGuard } from './worker-jwt.guard';
 import { WorkerTestingRequisitionsService } from './worker-testing-requisitions.service';
@@ -34,5 +35,10 @@ export class WorkerTestingRequisitionsController {
     limit: number,
   ) {
     return this.testingRequisitionsService.findAll(page, limit);
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.testingRequisitionsService.findOne(id);
   }
 }

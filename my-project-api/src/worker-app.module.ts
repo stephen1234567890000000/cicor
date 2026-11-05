@@ -11,6 +11,8 @@ import { WorkerMasterDataService } from './worker-master-data.service';
 import { WorkerMasterDataController } from './worker-master-data.controller';
 import { WorkerTestingRequisitionsController } from './worker-testing-requisitions.controller';
 import { WorkerTestingRequisitionsService } from './worker-testing-requisitions.service';
+import { WorkerRequisitionApprovalController } from './worker-requisition-approval.controller';
+import { WorkerRequisitionApprovalService } from './worker-requisition-approval.service';
 
 @Module({
   controllers: [
@@ -18,6 +20,7 @@ import { WorkerTestingRequisitionsService } from './worker-testing-requisitions.
     WorkerAuthController,
     WorkerMasterDataController,
     WorkerTestingRequisitionsController,
+    WorkerRequisitionApprovalController,
   ],
   providers: [
     AppService,
@@ -32,6 +35,7 @@ import { WorkerTestingRequisitionsService } from './worker-testing-requisitions.
     WorkerJwtGuard,
     WorkerMasterDataService,
     WorkerTestingRequisitionsService,
+    WorkerRequisitionApprovalService,
   ],
 })
 export class WorkerAppModule {}

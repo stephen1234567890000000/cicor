@@ -7,6 +7,7 @@ import {
   Get,
   DefaultValuePipe,
   ParseIntPipe,
+  Param,
 } from '@nestjs/common';
 import { TestingRequisitionsService } from './testing-requisitions.service';
 import { CreateTestingRequisitionDto } from './dto/testing-requisitions.dto';
@@ -34,5 +35,11 @@ export class TestingRequisitionsController {
     limit: number,
   ) {
     return this.testingRequisition.findAll(page, limit);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.testingRequisition.findOne(id);
   }
 }

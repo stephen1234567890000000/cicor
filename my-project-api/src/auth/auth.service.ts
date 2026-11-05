@@ -36,14 +36,14 @@ export class AuthService {
     const accessToken = await this.jwtService.signAsync({
       id: user.id,
       email: user.email,
-      role: user.roleRef.roleName,
+      roleId: user.roleId,
     });
 
     return {
       access_token: accessToken,
       name: user.name,
       email: user.email,
-      role: user.roleRef.roleName,
+      roleId: user.roleId,
       token_type: 'Bearer',
     };
   }
